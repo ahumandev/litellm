@@ -16,12 +16,14 @@ from .common_utils import (
     GetDeviceCodeError,
     RefreshAPIKeyError,
 )
+from .config import (
+    get_github_access_token_url,
+    get_github_copilot_api_key_url,
+    get_github_device_code_url,
+)
 
 # Constants
 GITHUB_CLIENT_ID = "Iv1.b507a08c87ecfe98"
-GITHUB_DEVICE_CODE_URL = "https://github.com/login/device/code"
-GITHUB_ACCESS_TOKEN_URL = "https://github.com/login/oauth/access_token"
-GITHUB_API_KEY_URL = "https://api.github.com/copilot_internal/v2/token"
 
 
 class Authenticator:
@@ -166,7 +168,7 @@ class Authenticator:
         for attempt in range(max_retries):
             try:
                 sync_client = _get_httpx_client()
-                response = sync_client.get(GITHUB_API_KEY_URL, headers=headers)
+                response = sync_client.get(get_github_copilot_api_key_url(), headers=headers)
                 response.raise_for_status()
 
                 response_json = response.json()
@@ -233,7 +235,7 @@ class Authenticator:
         try:
             sync_client = _get_httpx_client()
             resp = sync_client.post(
-                GITHUB_DEVICE_CODE_URL,
+                get_github_device_code_url(),
                 headers=self._get_github_headers(),
                 json={"client_id": GITHUB_CLIENT_ID, "scope": "read:user"},
             )
@@ -287,7 +289,7 @@ class Authenticator:
         for attempt in range(max_attempts):
             try:
                 resp = sync_client.post(
-                    GITHUB_ACCESS_TOKEN_URL,
+                    get_github_access_token_url(),
                     headers=self._get_github_headers(),
                     json={
                         "client_id": GITHUB_CLIENT_ID,

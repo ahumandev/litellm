@@ -5,7 +5,7 @@ from litellm.llms.openai.openai import OpenAIConfig
 from litellm.types.llms.openai import AllMessageValues
 
 from ..authenticator import Authenticator
-from ..common_utils import GetAPIKeyError, GITHUB_COPILOT_API_BASE
+from ..common_utils import GetAPIKeyError, GITHUB_COPILOT_API_BASE, get_copilot_default_headers
 
 
 class GithubCopilotConfig(OpenAIConfig):
@@ -69,6 +69,24 @@ class GithubCopilotConfig(OpenAIConfig):
             headers, model, messages, optional_params, litellm_params, api_key, api_base
         )
 
+        # Get the Copilot API key for headers
+        try:
+            copilot_api_key = self.authenticator.get_api_key()
+        except GetAPIKeyError as e:
+            raise AuthenticationError(
+                model=model,
+                llm_provider="github_copilot",
+                message=str(e),
+            )
+
+        # Merge in Copilot-specific IDE headers (including Editor-Version)
+        copilot_headers = get_copilot_default_headers(copilot_api_key)
+        
+        # Update validated_headers with copilot headers, but preserve any existing overrides
+        for key, value in copilot_headers.items():
+            if key.lower() not in {k.lower() for k in validated_headers.keys()}:
+                validated_headers[key] = value
+
         # Add X-Initiator header based on message roles
         initiator = self._determine_initiator(messages)
         validated_headers["X-Initiator"] = initiator
@@ -76,7 +94,7 @@ class GithubCopilotConfig(OpenAIConfig):
         # Add Copilot-Vision-Request header if request contains images
         if self._has_vision_content(messages):
             validated_headers["Copilot-Vision-Request"] = "true"
-
+        
         return validated_headers
 
     def get_supported_openai_params(self, model: str) -> list:

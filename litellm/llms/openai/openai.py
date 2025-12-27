@@ -631,15 +631,30 @@ class OpenAIChatCompletion(BaseLLM, BaseOpenAILLM):
                                 organization=organization,
                                 drop_params=drop_params,
                                 fake_stream=fake_stream,
-                                shared_session=shared_session,
-                            )
+                            shared_session=shared_session,
+                        )
+
+                    # Validate environment and enrich headers (e.g., for GitHub Copilot IDE headers)
+                    headers = provider_config.validate_environment(
+                        headers=headers or {},
+                        model=model,
+                        messages=messages,
+                        optional_params=inference_params,
+                        litellm_params=litellm_params,
+                        api_key=api_key,
+                        api_base=api_base,
+                    )
+                    
+                    # Update inference_params with enriched headers
+                    if headers:
+                        inference_params["extra_headers"] = headers
 
                     data = provider_config.transform_request(
                         model=model,
                         messages=messages,
                         optional_params=inference_params,
                         litellm_params=litellm_params,
-                        headers=headers or {},
+                        headers=headers,
                     )
                     if stream is True and fake_stream is False:
                         return self.streaming(
@@ -800,12 +815,28 @@ class OpenAIChatCompletion(BaseLLM, BaseOpenAILLM):
         shared_session: Optional["ClientSession"] = None,
     ):
         response = None
+        
+        # Validate environment and enrich headers (e.g., for GitHub Copilot IDE headers)
+        headers = provider_config.validate_environment(
+            headers=headers or {},
+            model=model,
+            messages=messages,
+            optional_params=optional_params,
+            litellm_params=litellm_params,
+            api_key=api_key,
+            api_base=api_base,
+        )
+        
+        # Update optional_params with enriched headers
+        if headers:
+            optional_params["extra_headers"] = headers
+        
         data = await provider_config.async_transform_request(
             model=model,
             messages=messages,
             optional_params=optional_params,
             litellm_params=litellm_params,
-            headers=headers or {},
+            headers=headers,
         )
         for _ in range(
             2
@@ -970,12 +1001,28 @@ class OpenAIChatCompletion(BaseLLM, BaseOpenAILLM):
         stream_options: Optional[dict] = None,
     ):
         response = None
+        
+        # Validate environment and enrich headers (e.g., for GitHub Copilot IDE headers)
+        headers = provider_config.validate_environment(
+            headers=headers or {},
+            model=model,
+            messages=messages,
+            optional_params=optional_params,
+            litellm_params=litellm_params,
+            api_key=api_key,
+            api_base=api_base,
+        )
+        
+        # Update optional_params with enriched headers
+        if headers:
+            optional_params["extra_headers"] = headers
+        
         data = provider_config.transform_request(
             model=model,
             messages=messages,
             optional_params=optional_params,
             litellm_params=litellm_params,
-            headers=headers or {},
+            headers=headers,
         )
         data["stream"] = True
         data.update(
