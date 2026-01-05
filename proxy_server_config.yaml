@@ -147,10 +147,6 @@ model_list:
     litellm_params:
       model: gpt-4o
       api_key: os.environ/OPENAI_API_KEY
-  - model_name: github_copilot/gpt-5-mini
-    litellm_params:
-      model: github_copilot/gpt-5-mini
-      custom_llm_provider: github_copilot
   - model_name: github_copilot/claude-haiku-4.5
     litellm_params:
       model: github_copilot/claude-haiku-4.5
@@ -162,6 +158,18 @@ model_list:
   - model_name: github_copilot/claude-opus-4.5
     litellm_params:
       model: github_copilot/claude-opus-4.5
+      custom_llm_provider: github_copilot
+  - model_name: github_copilot/gemini-2.5-pro
+    litellm_params:
+      model: github_copilot/gemini-2.5-pro
+      custom_llm_provider: github_copilot
+  - model_name: github_copilot/gpt-5-mini
+    litellm_params:
+      model: github_copilot/gpt-5-mini
+      custom_llm_provider: github_copilot
+  - model_name: github_copilot/gpt-5.2
+    litellm_params:
+      model: github_copilot/gpt-5.2
       custom_llm_provider: github_copilot
 
 
