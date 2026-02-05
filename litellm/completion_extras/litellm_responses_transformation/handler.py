@@ -61,9 +61,7 @@ class ResponsesToCompletionBridgeHandler:
                     existing.setdefault(key, value)
         return response
 
-    def _collect_response_from_stream(
-        self, stream_iter: Any
-    ) -> "ResponsesAPIResponse":
+    def _collect_response_from_stream(self, stream_iter: Any) -> "ResponsesAPIResponse":
         for _ in stream_iter:
             pass
 
@@ -78,9 +76,7 @@ class ResponsesToCompletionBridgeHandler:
             raise ValueError("Stream completed response is invalid")
         return response
 
-    async def _collect_response_from_stream_async(
-        self, stream_iter: Any
-    ) -> "ResponsesAPIResponse":
+    async def _collect_response_from_stream_async(self, stream_iter: Any) -> "ResponsesAPIResponse":
         async for _ in stream_iter:
             pass
 
@@ -95,9 +91,7 @@ class ResponsesToCompletionBridgeHandler:
             raise ValueError("Stream completed response is invalid")
         return response
 
-    def validate_input_kwargs(
-        self, kwargs: dict
-    ) -> ResponsesToCompletionBridgeHandlerInputKwargs:
+    def validate_input_kwargs(self, kwargs: dict) -> ResponsesToCompletionBridgeHandlerInputKwargs:
         from litellm import LiteLLMLoggingObj
         from litellm.types.utils import ModelResponse
 
@@ -144,7 +138,9 @@ class ResponsesToCompletionBridgeHandler:
             custom_llm_provider=custom_llm_provider,
         )
 
-    def completion(self, *args, **kwargs) -> Union[
+    def completion(
+        self, *args, **kwargs
+    ) -> Union[
         Coroutine[Any, Any, Union["ModelResponse", "CustomStreamWrapper"]],
         "ModelResponse",
         "CustomStreamWrapper",
@@ -173,6 +169,7 @@ class ResponsesToCompletionBridgeHandler:
             headers=headers,
             litellm_logging_obj=logging_obj,
             client=kwargs.get("client"),
+            custom_llm_provider=custom_llm_provider,
         )
 
         result = responses(
@@ -223,9 +220,7 @@ class ResponsesToCompletionBridgeHandler:
             )
             return streamwrapper
 
-    async def acompletion(
-        self, *args, **kwargs
-    ) -> Union["ModelResponse", "CustomStreamWrapper"]:
+    async def acompletion(self, *args, **kwargs) -> Union["ModelResponse", "CustomStreamWrapper"]:
         from litellm import aresponses
         from litellm.litellm_core_utils.streaming_handler import CustomStreamWrapper
 
@@ -247,6 +242,7 @@ class ResponsesToCompletionBridgeHandler:
                 litellm_params=litellm_params,
                 headers=headers,
                 litellm_logging_obj=logging_obj,
+                custom_llm_provider=custom_llm_provider,
             )
         except Exception as e:
             raise e
@@ -272,9 +268,7 @@ class ResponsesToCompletionBridgeHandler:
                 json_mode=kwargs.get("json_mode"),
             )
         elif not stream:
-            responses_api_response = await self._collect_response_from_stream_async(
-                result
-            )
+            responses_api_response = await self._collect_response_from_stream_async(result)
             return self.transformation_handler.transform_response(
                 model=model,
                 raw_response=responses_api_response,
