@@ -64,6 +64,20 @@ model_list:
        model: github_copilot/claude-opus-4.5
        api_key: "os.environ/GITHUB_TOKEN"
 
+   # Gemini API
+   - model_name: google/gemini-3-flash-preview
+     litellm_params:
+       model: gemini-3-flash-preview
+       api_base: https://generativelanguage.googleapis.com/v1beta/openai/
+       api_key: PUT-YOUR-KEY-HERE
+       custom_llm_provider: custom_openai
+   - model_name: google/gemini-3-pro-preview
+     litellm_params:
+       model: gemini-3-pro-preview
+       api_base: https://generativelanguage.googleapis.com/v1beta/openai/
+       api_key: PUT-YOUR-KEY-HERE
+       custom_llm_provider: custom_openai
+
 litellm_settings:
   # set_verbose: True # Uncomment this if you want to see verbose logs; not recommended in production
   drop_params: True
