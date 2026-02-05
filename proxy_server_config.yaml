@@ -111,7 +111,7 @@ litellm_settings:
 #   - custom_llm_provider: openai
 #     api_key: os.environ/OPENAI_API_KEY
 
-# router_settings:
+router_settings:
 #   routing_strategy: usage-based-routing-v2
 #   redis_host: os.environ/REDIS_HOST
 #   redis_password: os.environ/REDIS_PASSWORD
@@ -119,6 +119,10 @@ litellm_settings:
 #   enable_pre_call_checks: true
 #   model_group_alias:
 #     { "my-special-fake-model-alias-name": "fake-openai-endpoint-3" }
+  fallbacks:
+    - "claude-haiku-4-5-20251001": ["github_copilot/gpt-5-mini"]
+    - "claude-sonnet-4-5-20250929": ["github_copilot/claude-sonnet-4.5"]
+    - "claude-opus-4-5-20251101": ["github_copilot/claude-opus-4.5"]
 
 general_settings:
   master_key: sk-1234 # [OPTIONAL] Use to enforce auth on proxy. See - https://docs.litellm.ai/docs/proxy/virtual_keys
